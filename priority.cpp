@@ -24,8 +24,7 @@ using namespace std;
 *  Initializes refcolor to the default color according to the HSLAPixel implementation.
 */
 PriorityNeighbours::PriorityNeighbours() {
-  // complete your implementation below
-  
+  refcolor = HSLAPixel();
 }
 
 /*
@@ -33,8 +32,7 @@ PriorityNeighbours::PriorityNeighbours() {
 *  Initializes refcolor to the supplied value.
 */
 PriorityNeighbours::PriorityNeighbours(HSLAPixel ref) {
-  // complete your implementation below
-  
+  refcolor = ref;
 }
 
 /*
@@ -43,8 +41,7 @@ PriorityNeighbours::PriorityNeighbours(HSLAPixel ref) {
 *  POST:  the collection contains p, along with all previously existing items.
 */
 void PriorityNeighbours::Insert(PixelPoint p) {
-  // complete your implementation below
-  
+  points.push_back(p);
 }
 
 /*
@@ -69,9 +66,36 @@ void PriorityNeighbours::Insert(PixelPoint p) {
 *  priority order and/or accessing the priority element in this specific application!
 */
 PixelPoint PriorityNeighbours::Remove() {
-  // complete your implementation below
+  if (points.empty()) {
+    return NULL;
+  }
+
+  size_t priority_item_index = 0;
+  PixelPoint priority_item = points[0];
+  for (size_t i = 0; i < points.size(); i++) {
+    if (refcolor.dist(points[i].color) < refcolor.dist(priority_item.color)) {
+      priority_item_index = i;
+      priority_item = points[i];
+    }
+    if (refcolor.dist(points[i].color) == refcolor.dist(priority_item.color)) {
+      if (points[i].y < priority_item.y) {
+        priority_item_index = i;
+        priority_item = points[i];
+      }
+      if (points[i].y == priority_item.y) {
+        if (points[i].x < priority_item.x) {
+          priority_item_index = i;
+          priority_item = points[i];
+        }
+      }
+    }
+  }
   
-  return PixelPoint(); // REPLACE THIS STUB
+  points[priority_item_index] = points[points.size() - 1];
+  points[points.size() - 1] = priority_item;
+  points.pop_back();
+
+  return priority_item;
 }
 
 /*
@@ -80,18 +104,14 @@ PixelPoint PriorityNeighbours::Remove() {
 *          false, otherwise
 */
 bool PriorityNeighbours::IsEmpty() const {
-  // complete your implementation below
-  
-  return true; // REPLACE THIS STUB
+  return points.empty();
 }
 
 /*
 *  Returns the value of the reference color
 */
 HSLAPixel PriorityNeighbours::GetReferenceColor() const {
-  // complete your implementation below
-  
-  return HSLAPixel(); // REPLACE THIS STUB
+  return refcolor;
 }
 
 /*
@@ -99,6 +119,5 @@ HSLAPixel PriorityNeighbours::GetReferenceColor() const {
 *  POST: refcolor is set to the supplied value
 */
 void PriorityNeighbours::SetReferenceColor(HSLAPixel ref) {
-  // complete your implementation below
-  
+  refcolor = ref;
 }

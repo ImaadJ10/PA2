@@ -11,11 +11,13 @@
 *  be DEFAULTCAPACITY defined in stack.h.
 *
 */
+
 template <class T>
 Stack<T>::Stack()
 {
-  // complete your implementation below
-  
+  max_items = DEFAULTCAPACITY;
+  num_items = 0;
+  items = (T*) malloc(max_items * sizeof(T));
 }
 
 /*
@@ -24,8 +26,11 @@ Stack<T>::Stack()
 template <class T>
 Stack<T>::~Stack()
 {
-  // complete your implementation below
-  
+  max_items = NULL;
+  num_items = NULL;
+
+  delete items;
+  items = nullptr;
 }
 
 /*
@@ -40,8 +45,11 @@ Stack<T>::~Stack()
 */
 template <class T>
 void Stack<T>::Push(const T& item) {
-  // complete your implementation below
-  
+  if (num_items >= max_items) {
+    Resize(EXPANSIONFACTOR * max_items);
+  }
+
+  items[num_items++] = item;
 };
 
 /*
@@ -56,10 +64,17 @@ void Stack<T>::Push(const T& item) {
 */
 template <class T>
 T Stack<T>::Pop() {
-  // complete your implementation below
-  
-  T item;      // REPLACE THESE LINES
-  return item; // REPLACE THESE LINES
+  T item = items[--num_items];
+  items[num_items] = NULL;
+
+  if ((double) num_items / (double) max_items < 1.0 / SHRINKRATE && max_items / EXPANSIONFACTOR >= DEFAULTCAPACITY) {
+    Resize(max_items / EXPANSIONFACTOR);
+  }
+  if ((double) num_items / (double) max_items < 1.0 / SHRINKRATE && num_items / max_items < DEFAULTCAPACITY) {
+    Resize(DEFAULTCAPACITY);
+  }
+
+  return item;
 };
 
 /*
@@ -69,10 +84,7 @@ T Stack<T>::Pop() {
 template <class T>
 void Stack<T>::Add(const T& item)
 {
-  // complete your implementation below
-  // Hint: this should call another Stack function
-  //   to add the element to the Stack.
-  
+  Push(item);
 }
 
 /*
@@ -84,12 +96,9 @@ void Stack<T>::Add(const T& item)
 template <class T>
 T Stack<T>::Remove()
 {
-  // complete your implementation below
-  // Hint: this should call another Stack function
-  //   to remove an element from the Stack and return it.
-  
-  T item;      // REPLACE THESE LINES
-  return item; // REPLACE THESE LINES
+  T item = Pop();
+
+  return item;
 }
 
 /*
@@ -102,10 +111,9 @@ T Stack<T>::Remove()
 */
 template <class T>
 T Stack<T>::Peek() {
-  // complete your implementation below
-  
-  T item;      // REPLACE THESE LINES
-  return item; // REPLACE THESE LINES
+  T item = items[num_items - 1];
+
+  return item;
 };
 
 /*
@@ -115,9 +123,11 @@ T Stack<T>::Peek() {
 */
 template <class T>
 bool Stack<T>::IsEmpty() const {
-  // complete your implementation below
-  
-  return true; // REPLACE THIS STUB
+  if (num_items == 0) {
+    return true;
+  } else {
+    return false;
+  }
 };
 
 /*
@@ -130,9 +140,7 @@ bool Stack<T>::IsEmpty() const {
 */
 template <class T>
 size_t Stack<T>::Capacity() const {
-  // complete your implementation below
-  
-  return 0; // REPLACE THIS STUB
+  return max_items;
 };
 
 /*
@@ -141,9 +149,7 @@ size_t Stack<T>::Capacity() const {
 */
 template <class T>
 size_t Stack<T>::Size() const {
-  // complete your implementation below
-  
-  return 0; // REPLACE THIS STUB
+  return num_items;
 };
 
 /*
@@ -155,6 +161,15 @@ size_t Stack<T>::Size() const {
 */
 template <class T>
 void Stack<T>::Resize(size_t n) {
-  // complete your implementation below
-  
+  T* prior = items;
+
+  max_items = n;
+  items = (T*) malloc(n * sizeof(T));
+
+  for (size_t i = 0; i < num_items; i++) {
+    items[i] = prior[i];
+  }
+
+  delete prior;
+  prior = nullptr;
 };
