@@ -60,7 +60,7 @@ template <class T>
 T Queue<T>::Remove()
 {
   T item = Dequeue();
-  return item; // REPLACE THESE LINES
+  return item;
 }
 
 /*
