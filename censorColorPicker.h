@@ -59,6 +59,11 @@ class CensorColorPicker : public ColorPicker
     unsigned int radius;     // maximum pixel distance away from center where the mosaic color will be applied
     PNG img;                 // Original image used in flood fill algorithm
     PNG blockyimg;           // fully block-ified version of the original image, computed once at creation time
+
+    HSLAPixel AveragePixelsHSLA(int x, int y, PNG& sourceimg);
+    void SetPixels(int x, int y, PNG& sourceimg, HSLAPixel& averagepixel);
+    bool IsInRegion(PixelPoint p);
+
 };
 
 #endif
