@@ -7,12 +7,16 @@
 #include "imageTileColorPicker.h"
 
 ImageTileColorPicker::ImageTileColorPicker(PNG& otherimage) {
-  // complete your implementation below
-  
+  img_other = otherimage;
 }
 
 HSLAPixel ImageTileColorPicker::operator()(PixelPoint p) {
-  // complete your implementation below
+  HSLAPixel* otherPixel = img_other.getPixel(p.x, p.y);
+  HSLAPixel color = p.color;
+  color.h = otherPixel->h;
+  color.s = otherPixel->s;
+  color.l = otherPixel->l;
+  color.a = otherPixel->a;
   
-  return HSLAPixel(); // REPLACE THIS STUB
+  return color;
 }
