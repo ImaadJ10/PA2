@@ -11,12 +11,8 @@ ImageTileColorPicker::ImageTileColorPicker(PNG& otherimage) {
 }
 
 HSLAPixel ImageTileColorPicker::operator()(PixelPoint p) {
-  HSLAPixel* otherPixel = img_other.getPixel(p.x, p.y);
-  HSLAPixel color = p.color;
-  color.h = otherPixel->h;
-  color.s = otherPixel->s;
-  color.l = otherPixel->l;
-  color.a = otherPixel->a;
-  
+  unsigned int width = img_other.width();
+  unsigned int height = img_other.height();
+  HSLAPixel color = *img_other.getPixel(p.x % width, p.y % height); 
   return color;
 }
