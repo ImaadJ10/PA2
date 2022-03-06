@@ -11,10 +11,7 @@
 *  RETURN: animation object illustrating progression of flood fill algorithm
 */
 animation filler::FillBFS(FillerConfig& config) {
-  // complete your implementation below
-  // You should replace the following line with a
-  // correct call to fill.
-  return animation(); // REPLACE THIS STUB
+  return Fill<Queue>(config); 
 }
 
 /*
@@ -24,10 +21,7 @@ animation filler::FillBFS(FillerConfig& config) {
 *  RETURN: animation object illustrating progression of flood fill algorithm
 */
 animation filler::FillDFS(FillerConfig& config) {
-  // complete your implementation below
-  // You should replace the following line with a
-  // correct call to fill.
-  return animation(); // REPLACE THIS STUB
+  return Fill<Stack>(config); 
 }
 
 /*
