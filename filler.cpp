@@ -103,37 +103,39 @@ template <template <class T> class OrderingStructure> animation filler::Fill(Fil
   config.neighbourorder = PriorityNeighbours(seedPixel);
 
   os.Add(config.seedpoint);
-  // complete your implementation below
-  // HINT: you will likely want to declare some kind of structure to track
-  //       which pixels have already been visited
+  
   while (!os.IsEmpty()) {
 
     currPixel = os.Remove();
     currImgPixel = config.img.getPixel(currPixel.x, currPixel.y);
 
-    if ((*currImgPixel).dist(seedPixel) <= config.tolerance && find(visited.begin(), visited.end(), currPixel) != visited.end()) {
+    if (seedPixel.dist(*currImgPixel) <= config.tolerance && !(find(visited.begin(), visited.end(), currPixel) != visited.end())) {
 
-      if (framecount % config.frameFreq == 0) {
+      if (framecount % config.frameFreq == 0)
         anim.addFrame(config.img);
-      }
+      
 
-      *currImgPixel = config.picker->operator()(currPixel);
-
+      *currImgPixel = (*config.picker)(currPixel);
+      
       if (currPixel.x - 1 >= 0) 
         config.neighbourorder.Insert(PixelPoint(currPixel.x - 1, currPixel.y));
-      else if (currPixel.x + 1 < config.img.width())
+      if (currPixel.x + 1 < config.img.width())
         config.neighbourorder.Insert(PixelPoint(currPixel.x + 1, currPixel.y));
-      else if (currPixel.y - 1 >= 0)
+      if (currPixel.y - 1 >= 0)
         config.neighbourorder.Insert(PixelPoint(currPixel.x, currPixel.y - 1));
-      else if (currPixel.y + 1 < config.img.height())
+      if (currPixel.y + 1 < config.img.height())
         config.neighbourorder.Insert(PixelPoint(currPixel.x, currPixel.y + 1));
 
       while (!config.neighbourorder.IsEmpty()) {
         os.Add(config.neighbourorder.Remove());
       }
+
+      framecount++;
     }
-    visited.push_back(currPixel);
-    framecount++;
+
+    if (!(find(visited.begin(), visited.end(), currPixel) != visited.end())) 
+      visited.push_back(currPixel);
+    
   }
 
   anim.addFrame(config.img);
