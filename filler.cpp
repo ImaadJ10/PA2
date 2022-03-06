@@ -3,6 +3,8 @@
 *  Description: Implementation of functions in the filler namespace.
 *
 */
+#include <vector>
+#include <algorithm>
 
 /*
 *  Performs a flood fill using breadth first search.
@@ -94,11 +96,46 @@ template <template <class T> class OrderingStructure> animation filler::Fill(Fil
   int framecount = 0; // increment after processing one pixel; used for producing animation frames (step 3 above)
   animation anim;
   OrderingStructure<PixelPoint> os;
+  PixelPoint currPixel;
+  HSLAPixel* currImgPixel;
+  HSLAPixel seedPixel = *config.img.getPixel(config.seedpoint.x, config.seedpoint.y);
+  vector<PixelPoint> visited;
+  config.neighbourorder = PriorityNeighbours(seedPixel);
 
+  os.Add(config.seedpoint);
   // complete your implementation below
   // HINT: you will likely want to declare some kind of structure to track
   //       which pixels have already been visited
-  
+  while (!os.IsEmpty()) {
 
+    currPixel = os.Remove();
+    currImgPixel = config.img.getPixel(currPixel.x, currPixel.y);
+
+    if ((*currImgPixel).dist(seedPixel) <= config.tolerance && find(visited.begin(), visited.end(), currPixel) != visited.end()) {
+
+      if (framecount % config.frameFreq == 0) {
+        anim.addFrame(config.img);
+      }
+
+      *currImgPixel = config.picker->operator()(currPixel);
+
+      if (currPixel.x - 1 >= 0) 
+        config.neighbourorder.Insert(PixelPoint(currPixel.x - 1, currPixel.y));
+      else if (currPixel.x + 1 < config.img.width())
+        config.neighbourorder.Insert(PixelPoint(currPixel.x + 1, currPixel.y));
+      else if (currPixel.y - 1 >= 0)
+        config.neighbourorder.Insert(PixelPoint(currPixel.x, currPixel.y - 1));
+      else if (currPixel.y + 1 < config.img.height())
+        config.neighbourorder.Insert(PixelPoint(currPixel.x, currPixel.y + 1));
+
+      while (!config.neighbourorder.IsEmpty()) {
+        os.Add(config.neighbourorder.Remove());
+      }
+    }
+    visited.push_back(currPixel);
+    framecount++;
+  }
+
+  anim.addFrame(config.img);
   return anim;
 }
